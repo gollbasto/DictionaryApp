@@ -21,9 +21,10 @@ import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import logic.KeyPressHandler;
-import logic.Main;
 
 import java.util.*;
+
+import static logic.Main.abbrCollection;
 
 /**
  * Created by hanashi on 19.07.2017.
@@ -69,15 +70,28 @@ public class UserScreen {
    }
 
    private void createHeader(){
+
       //коробка - обертка
+      HBox headerBox = createElementContainer();
+      //кнопка "Обновить из файла"
+      createRefreshFromFileButton();
+      //поле с вводимым пользователем текстом
+      createUserTextField();
+      headerBox.getChildren().add(userText);
+      root.add(headerBox, 0, 0);
+   }
+
+   private HBox createElementContainer() {
       HBox headerBox = new HBox();
       headerBox.setBorder(new Border(
               new BorderStroke(Paint.valueOf("#ffffff"),
                       new BorderStrokeStyle(StrokeType.OUTSIDE, StrokeLineJoin.BEVEL, StrokeLineCap.ROUND,  0, 0, new ArrayList<Double>()),
                       new CornerRadii(1),
                       new BorderWidths(1))));
+      return headerBox;
+   }
 
-      //кнопка "Обновить из файла"
+   private void createRefreshFromFileButton(){
       Image img = new Image("file:res/refresh2.png");
       ImageView view = new ImageView(img);
       Tooltip.install(view, new Tooltip("Обновить из файла"));
@@ -86,17 +100,16 @@ public class UserScreen {
          @Override
          public void handle(MouseEvent event)
          {
-            Main.abbrCollection.refresh();
+            abbrCollection.refresh();
          }
       });
       root.add(view, 1, 0);
+   }
 
-      //поле с вводимым пользователем текстом
+   private void createUserTextField(){
       userText = new Label("");
       userText.setId("userText");
       userText.setFont(new Font(20));
-      headerBox.getChildren().add(userText);
-      root.add(headerBox, 0, 0);
    }
 
    private void createBody() {
@@ -136,7 +149,7 @@ public class UserScreen {
             if (abbrName != null)
             {
                ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
-               descrListView.setItems(createDescrList2(Main.abbrCollection.get(abbrName), abbrName));
+               descrListView.setItems(createDescrList2(abbrCollection.get(abbrName), abbrName));
             }
          }
       });
@@ -149,7 +162,7 @@ public class UserScreen {
                ListView<String> abbrList =  (ListView<String>) event.getSource();
                ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
                if (abbrList.getSelectionModel().getSelectedItem() != null) {
-                  descrListView.setItems(createDescrList2(Main.abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
+                  descrListView.setItems(createDescrList2(abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
                }
             }
          }
@@ -163,7 +176,7 @@ public class UserScreen {
                ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
                if (abbrList.getSelectionModel().getSelectedItem() != null)
                {
-                  descrListView.setItems(createDescrList2(Main.abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
+                  descrListView.setItems(createDescrList2(abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
                }
             }
          }
@@ -189,16 +202,16 @@ public class UserScreen {
    public void updateUserTextString(String text) {
       userText.setText(text);
 
-      ObservableList<String> list = createAbbrList(Main.abbrCollection.get(text));
+      ObservableList<String> list = createAbbrList(abbrCollection.get(text));
       abbrListView.setItems(list);
 
       if (!list.isEmpty())
       {
-         updateDescrList(createDescrList2(Main.abbrCollection.get(text), list.get(0)));
+         updateDescrList(createDescrList2(abbrCollection.get(text), list.get(0)));
       }
       else
       {
-         updateDescrList(createDescrList2(Main.abbrCollection.get(""),""));
+         updateDescrList(createDescrList2(abbrCollection.get(""),""));
       }
    }
 

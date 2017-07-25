@@ -2,6 +2,8 @@ package logic;
 
 import javafx.scene.input.KeyCode;
 
+import static logic.Main.screen;
+
 /**
  * Created by hanashi on 19.07.2017.
  */
@@ -14,8 +16,8 @@ public class KeyPressHandler
       switch (code)
       {
          case ESCAPE:
-            searchString = "";
-            Main.screen.updateUserTextString(searchString);
+            resetSearchString();
+            screen.updateUserTextString(searchString);
             break;
 
          case DELETE:
@@ -23,7 +25,7 @@ public class KeyPressHandler
             if (!searchString.isEmpty())
             {
                searchString = searchString.substring(0, searchString.length() - 1);
-               Main.screen.updateUserTextString(searchString);
+               screen.updateUserTextString(searchString);
             }
             break;
 
@@ -47,7 +49,7 @@ public class KeyPressHandler
                }
             }
 
-            Main.screen.updateUserTextString(searchString);
+            screen.updateUserTextString(searchString);
             break;
       }
    }
