@@ -29,7 +29,6 @@ public class AbbrCollection
          File abbrCollectionFile = new File(filePath);
          if(abbrCollectionFile.exists()) {
             try {
-
                BufferedReader reader = new BufferedReader(new FileReader(abbrCollectionFile));
                String line;
 
@@ -44,8 +43,7 @@ public class AbbrCollection
       }
    }
 
-   private void addOrUpdateAbbreviationToCollection(boolean splitSuccess, List<String> values)
-   {
+   private void addOrUpdateAbbreviationToCollection(boolean splitSuccess, List<String> values) {
       if(splitSuccess) {
          if (collection.keySet().contains(values.get(0))) {
             collection.get(values.get(0)).add(values.get(1));
@@ -57,8 +55,7 @@ public class AbbrCollection
       }
    }
 
-   private Object[] splitToAbbreviationAndDescription(String line)
-   {
+   private Object[] splitToAbbreviationAndDescription(String line) {
       Object[] result = new Object[2];
       List<String> values = new ArrayList<>();
       boolean splitSuccess = false;
