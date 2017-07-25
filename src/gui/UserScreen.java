@@ -155,8 +155,7 @@ public class UserScreen {
          }
       });
 
-      abbrListView.setOnKeyReleased(new EventHandler<KeyEvent>()
-      {
+      abbrListView.setOnKeyReleased(new EventHandler<KeyEvent>() {
          @Override
          public void handle(KeyEvent event) {
             if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
@@ -179,18 +178,15 @@ public class UserScreen {
       root.setStyle("-fx-background-color: " + BG);
    }
 
-   public Scene getScene()
-   {
+   public Scene getScene() {
       return scene;
    }
 
-   public GridPane getRoot()
-   {
+   public GridPane getRoot() {
       return root;
    }
 
-   public void updateUserTextString(String text)
-   {
+   public void updateUserTextString(String text) {
       userText.setText(text);
 
       ObservableList<String> list = createAbbrList(Main.abbrCollection.get(text));
@@ -206,8 +202,7 @@ public class UserScreen {
       }
    }
 
-   public ObservableList<String> createAbbrList(Map<String, List<String>> abbrCollection)
-   {
+   public ObservableList<String> createAbbrList(Map<String, List<String>> abbrCollection) {
       ObservableList<String> list = FXCollections.observableArrayList();
 
       for (String abbr : abbrCollection.keySet())
@@ -218,8 +213,7 @@ public class UserScreen {
       return list;
    }
 
-   public ObservableList<String> createDescrList(Map<String, List<String>> abbrCollection, String abbrName)
-   {
+   public ObservableList<String> createDescrList(Map<String, List<String>> abbrCollection, String abbrName) {
       ObservableList<String> list = FXCollections.observableArrayList();
 
       if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null)
@@ -233,8 +227,7 @@ public class UserScreen {
       return list;
    }
 
-   public ObservableList<TextArea> createDescrList2(Map<String, List<String>> abbrCollection, String abbrName)
-   {
+   public ObservableList<TextArea> createDescrList2(Map<String, List<String>> abbrCollection, String abbrName) {
       ObservableList<TextArea> list = FXCollections.observableArrayList();
 
       if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null)
@@ -264,23 +257,19 @@ public class UserScreen {
       return list;
    }
 
-   public void updateAbbrList(Map<String, List<String>> abbrCollection)
-   {
+   public void updateAbbrList(Map<String, List<String>> abbrCollection) {
       abbrListView.setItems(createAbbrList(abbrCollection));
    }
 
-   public void updateDescrList(ObservableList<TextArea> descrList)
-   {
+   public void updateDescrList(ObservableList<TextArea> descrList) {
       descrListView.setItems(descrList);
    }
 
-   public void resetAbbrListCursor()
-   {
+   public void resetAbbrListCursor() {
       abbrListView.getSelectionModel().select(0);
    }
 
-   public void resetSearchString()
-   {
+   public void resetSearchString() {
       keyPressHandler.resetSearchString();
    }
 }
