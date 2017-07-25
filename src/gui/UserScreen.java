@@ -79,7 +79,7 @@ public class UserScreen {
       createUserTextField();
    }
 
-   private HBox createElementContainer() {
+   private HBox createUserTextStringContainer() {
       HBox headerBox = new HBox();
       headerBox.setBorder(new Border(
               new BorderStroke(Paint.valueOf(USER_TEXT_FIELD_BORDER_COLOR),
@@ -105,7 +105,7 @@ public class UserScreen {
 
    private void createUserTextField() {
       //коробка - обертка
-      HBox headerBox = createElementContainer();
+      HBox headerBox = createUserTextStringContainer();
 
       userText = new Label("");
       userText.setId("userText");
