@@ -45,6 +45,7 @@ public class UserScreen {
    private static final int SCREEN_HEIGHT = 400;
    private static final String REFRESH_BUTTON_TOOLTIP = "Обновить из файла";
    private static final String REFRESH_BUTTON_ICON_PATH = "file:res/refresh2.png";
+   private static final String EMPTY_STR = "";
 
    private KeyPressHandler keyPressHandler = new KeyPressHandler();
 
@@ -107,7 +108,7 @@ public class UserScreen {
       //коробка - обертка
       HBox headerBox = createUserTextStringContainer();
 
-      userText = new Label("");
+      userText = new Label(EMPTY_STR);
       userText.setId("userText");
       userText.setFont(new Font(20));
 
@@ -222,7 +223,7 @@ public class UserScreen {
       }
       else
       {
-         updateDescrList(createDescrList2(abbrCollection.get(""),""));
+         updateDescrList(createDescrList2(abbrCollection.get(EMPTY_STR),EMPTY_STR));
       }
    }
 
