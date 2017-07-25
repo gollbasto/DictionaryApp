@@ -35,13 +35,16 @@ public class UserScreen {
    private Label userText;
    private ListView<String> abbrListView;
    private ListView<TextArea> descrListView;
-   private static final String BG = "#40c080";
+   private static final String BG_COLOR = "#40c080";
+   private static final String USER_TEXT_FIELD_BORDER_COLOR = "#ffffff";
    private static final double ABBR_LIST_WIDTH = 400;
    private static final double DESCR_LIST_WIDTH = 610;
    private static final double DESCR_TEXT_WIDTH = DESCR_LIST_WIDTH - 20;
    private static final double DESCR_TEXT_AREA_SINGLE_ROW_WITH = 88;
    private static final int SCREEN_WIDTH = 1000;
    private static final int SCREEN_HEIGHT = 400;
+   private static final String REFRESH_BUTTON_TOOLTIP = "Обновить из файла";
+   private static final String REFRESH_BUTTON_ICON_PATH = "file:res/refresh2.png";
 
    private KeyPressHandler keyPressHandler = new KeyPressHandler();
 
@@ -52,11 +55,11 @@ public class UserScreen {
       createBody();
    }
 
-   private boolean IsModifier(KeyCode code){
+   private boolean IsModifier(KeyCode code) {
       return code.equals(KeyCode.SHIFT) || code.equals(KeyCode.CONTROL) || code.equals(KeyCode.ALT);
    }
 
-   private void createScene(){
+   private void createScene() {
       scene = new Scene(root, SCREEN_WIDTH, SCREEN_HEIGHT);
       scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
          @Override
@@ -69,47 +72,47 @@ public class UserScreen {
       });
    }
 
-   private void createHeader(){
-
-      //коробка - обертка
-      HBox headerBox = createElementContainer();
+   private void createHeader() {
       //кнопка "Обновить из файла"
       createRefreshFromFileButton();
       //поле с вводимым пользователем текстом
       createUserTextField();
-      headerBox.getChildren().add(userText);
-      root.add(headerBox, 0, 0);
    }
 
    private HBox createElementContainer() {
       HBox headerBox = new HBox();
       headerBox.setBorder(new Border(
-              new BorderStroke(Paint.valueOf("#ffffff"),
+              new BorderStroke(Paint.valueOf(USER_TEXT_FIELD_BORDER_COLOR),
                       new BorderStrokeStyle(StrokeType.OUTSIDE, StrokeLineJoin.BEVEL, StrokeLineCap.ROUND,  0, 0, new ArrayList<Double>()),
                       new CornerRadii(1),
                       new BorderWidths(1))));
       return headerBox;
    }
 
-   private void createRefreshFromFileButton(){
-      Image img = new Image("file:res/refresh2.png");
+   private void createRefreshFromFileButton() {
+      Image img = new Image(REFRESH_BUTTON_ICON_PATH);
       ImageView view = new ImageView(img);
-      Tooltip.install(view, new Tooltip("Обновить из файла"));
-      view.setOnMouseClicked(new EventHandler<MouseEvent>()
-      {
+      Tooltip.install(view, new Tooltip(REFRESH_BUTTON_TOOLTIP));
+
+      view.setOnMouseClicked(new EventHandler<MouseEvent>() {
          @Override
-         public void handle(MouseEvent event)
-         {
+         public void handle(MouseEvent event) {
             abbrCollection.refresh();
          }
       });
       root.add(view, 1, 0);
    }
 
-   private void createUserTextField(){
+   private void createUserTextField() {
+      //коробка - обертка
+      HBox headerBox = createElementContainer();
+
       userText = new Label("");
       userText.setId("userText");
       userText.setFont(new Font(20));
+
+      headerBox.getChildren().add(userText);
+      root.add(headerBox, 0, 0);
    }
 
    private void createBody() {
@@ -118,7 +121,7 @@ public class UserScreen {
       createDescriptionList();
    }
 
-   private void createDescriptionList(){
+   private void createDescriptionList() {
       HBox descrBox = new HBox();
       descrListView = new ListView<>();
       descrListView.setId("descriptionsList");
@@ -129,7 +132,7 @@ public class UserScreen {
       root.add(descrBox, 1,1);
    }
 
-   private void createAbbreviationList(){
+   private void createAbbreviationList() {
       //обертка для списка аббревиатур
       HBox abbrBox = new HBox();
 
@@ -141,7 +144,15 @@ public class UserScreen {
       abbrListView.setItems(abbrList);
       abbrListView.setId("abbrList");
       abbrListView.setMinWidth(ABBR_LIST_WIDTH);
-      abbrListView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      abbrListView.setOnMouseClicked(abbrListMouseEventHandler());
+      abbrListView.setOnKeyPressed(abbrListKeyPressedHandler());
+      abbrListView.setOnKeyReleased(abbrListKeyReleasedHandler());
+      abbrBox.getChildren().add(abbrListView);
+      root.add(abbrBox, 0, 1);
+   }
+
+   private EventHandler<MouseEvent> abbrListMouseEventHandler() {
+      return  new EventHandler<MouseEvent>() {
          @Override
          public void handle(MouseEvent event) {
             ListView<String> abbrList =  (ListView<String>) event.getSource();
@@ -152,9 +163,11 @@ public class UserScreen {
                descrListView.setItems(createDescrList2(abbrCollection.get(abbrName), abbrName));
             }
          }
-      });
+      };
+   }
 
-      abbrListView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+   private EventHandler<KeyEvent> abbrListKeyPressedHandler() {
+      return new EventHandler<KeyEvent>() {
          @Override
          public void handle(KeyEvent event) {
             if (event.getCode().equals(KeyCode.ENTER))
@@ -166,29 +179,27 @@ public class UserScreen {
                }
             }
          }
-      });
+      };
+   }
 
-      abbrListView.setOnKeyReleased(new EventHandler<KeyEvent>() {
+   private EventHandler<KeyEvent> abbrListKeyReleasedHandler() {
+      return new EventHandler<KeyEvent>() {
          @Override
          public void handle(KeyEvent event) {
             if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
                ListView<String> abbrList =  (ListView<String>) event.getSource();
                ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
-               if (abbrList.getSelectionModel().getSelectedItem() != null)
-               {
+               if (abbrList.getSelectionModel().getSelectedItem() != null) {
                   descrListView.setItems(createDescrList2(abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
                }
             }
          }
-      });
-
-      abbrBox.getChildren().add(abbrListView);
-      root.add(abbrBox, 0, 1);
+      };
    }
 
-   private void createRoot(){
+   private void createRoot() {
       root = new GridPane();
-      root.setStyle("-fx-background-color: " + BG);
+      root.setStyle("-fx-background-color: " + BG_COLOR);
    }
 
    public Scene getScene() {
@@ -243,8 +254,7 @@ public class UserScreen {
    public ObservableList<TextArea> createDescrList2(Map<String, List<String>> abbrCollection, String abbrName) {
       ObservableList<TextArea> list = FXCollections.observableArrayList();
 
-      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null)
-      {
+      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null) {
          for (String descr : abbrCollection.get(abbrName))
          {
             TextArea area = new TextArea(descr);
