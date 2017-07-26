@@ -158,8 +158,7 @@ public class UserScreen {
          public void handle(MouseEvent event) {
             ListView<String> abbrList =  (ListView<String>) event.getSource();
             String abbrName = abbrList.getSelectionModel().getSelectedItem();
-            if (abbrName != null)
-            {
+            if (abbrName != null) {
                ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
                descrListView.setItems(createDescrList2(abbrCollection.get(abbrName), abbrName));
             }
@@ -171,8 +170,7 @@ public class UserScreen {
       return new EventHandler<KeyEvent>() {
          @Override
          public void handle(KeyEvent event) {
-            if (event.getCode().equals(KeyCode.ENTER))
-            {
+            if (event.getCode().equals(KeyCode.ENTER)) {
                ListView<String> abbrList =  (ListView<String>) event.getSource();
                ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
                if (abbrList.getSelectionModel().getSelectedItem() != null) {
@@ -217,12 +215,9 @@ public class UserScreen {
       ObservableList<String> list = createAbbrList(abbrCollection.get(text));
       abbrListView.setItems(list);
 
-      if (!list.isEmpty())
-      {
+      if (!list.isEmpty()) {
          updateDescrList(createDescrList2(abbrCollection.get(text), list.get(0)));
-      }
-      else
-      {
+      } else {
          updateDescrList(createDescrList2(abbrCollection.get(EMPTY_STR),EMPTY_STR));
       }
    }
@@ -230,8 +225,7 @@ public class UserScreen {
    public ObservableList<String> createAbbrList(Map<String, List<String>> abbrCollection) {
       ObservableList<String> list = FXCollections.observableArrayList();
 
-      for (String abbr : abbrCollection.keySet())
-      {
+      for (String abbr : abbrCollection.keySet()) {
          list.add(abbr);
       }
       Collections.sort(list);
@@ -241,10 +235,8 @@ public class UserScreen {
    public ObservableList<String> createDescrList(Map<String, List<String>> abbrCollection, String abbrName) {
       ObservableList<String> list = FXCollections.observableArrayList();
 
-      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null)
-      {
-         for (String descr : abbrCollection.get(abbrName))
-         {
+      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null) {
+         for (String descr : abbrCollection.get(abbrName)) {
             list.add(descr);
          }
          Collections.sort(list);
@@ -256,20 +248,16 @@ public class UserScreen {
       ObservableList<TextArea> list = FXCollections.observableArrayList();
 
       if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null) {
-         for (String descr : abbrCollection.get(abbrName))
-         {
+         for (String descr : abbrCollection.get(abbrName)) {
             TextArea area = new TextArea(descr);
             area.setWrapText(true);
             area.setPrefWidth(DESCR_TEXT_WIDTH);
             area.setPadding(new Insets(10,0,0,0));
 
             area.setStyle("-fx-focus-color: transparent; -fx-text-box-border: transparent; -fx-background-color: transparent; -fx-background-insets: -0.4, 1, 2; -fx-background-radius: 3.4, 2, 2;");
-            if(area.getText().length() > DESCR_TEXT_AREA_SINGLE_ROW_WITH)
-            {
+            if(area.getText().length() > DESCR_TEXT_AREA_SINGLE_ROW_WITH) {
                area.setPrefHeight(70);
-            }
-            else
-            {
+            } else {
                area.setPrefHeight(10);
             }
             //area.setEditable(false);
