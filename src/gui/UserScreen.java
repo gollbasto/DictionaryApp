@@ -156,10 +156,8 @@ public class UserScreen {
       return  new EventHandler<MouseEvent>() {
          @Override
          public void handle(MouseEvent event) {
-            ListView<String> abbrList =  (ListView<String>) event.getSource();
-            String abbrName = abbrList.getSelectionModel().getSelectedItem();
+            String abbrName = abbrListView.getSelectionModel().getSelectedItem();
             if (abbrName != null) {
-               ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
                descrListView.setItems(createDescrList2(abbrCollection.get(abbrName), abbrName));
             }
          }
@@ -171,10 +169,8 @@ public class UserScreen {
          @Override
          public void handle(KeyEvent event) {
             if (event.getCode().equals(KeyCode.ENTER)) {
-               ListView<String> abbrList =  (ListView<String>) event.getSource();
-               ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
-               if (abbrList.getSelectionModel().getSelectedItem() != null) {
-                  descrListView.setItems(createDescrList2(abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
+               if (abbrListView.getSelectionModel().getSelectedItem() != null) {
+                  descrListView.setItems(createDescrList2(abbrCollection.get(abbrListView.getSelectionModel().getSelectedItem()), abbrListView.getSelectionModel().getSelectedItem()));
                }
             }
          }
@@ -186,10 +182,8 @@ public class UserScreen {
          @Override
          public void handle(KeyEvent event) {
             if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
-               ListView<String> abbrList =  (ListView<String>) event.getSource();
-               ListView<TextArea> descrListView = (ListView<TextArea>) abbrList.getParent().getParent().lookup("#descriptionsList");
-               if (abbrList.getSelectionModel().getSelectedItem() != null) {
-                  descrListView.setItems(createDescrList2(abbrCollection.get(abbrList.getSelectionModel().getSelectedItem()), abbrList.getSelectionModel().getSelectedItem()));
+               if (abbrListView.getSelectionModel().getSelectedItem() != null) {
+                  descrListView.setItems(createDescrList2(abbrCollection.get(abbrListView.getSelectionModel().getSelectedItem()), abbrListView.getSelectionModel().getSelectedItem()));
                }
             }
          }
