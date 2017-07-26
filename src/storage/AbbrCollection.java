@@ -13,8 +13,7 @@ import static logic.Main.screen;
 /**
  * Created by hanashi on 20.07.2017.
  */
-public class AbbrCollection
-{
+public class AbbrCollection {
    private Map<String, List<String>> collection;
    private List<String> splitPatterns = Arrays.asList(" \u002D ", "\t\u002D ", " \u002D\t", "\t\u002D\t", " \u2013 ", "\t\u2013 ", " \u2013\t", "\t\u2013\t");
 

@@ -6,8 +6,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import storage.AbbrCollection;
 
-public class Main extends Application
-{
+public class Main extends Application {
    public static final String COLLECTION_PATH = "./res/abbr.txt";
    private static final String APP_ICON_PATH =  "file:res/app.png";
    private static final String APP_TITLE = "AbbrDictionaryApp";
@@ -15,8 +14,7 @@ public class Main extends Application
    public static AbbrCollection abbrCollection = new AbbrCollection(COLLECTION_PATH);
 
    @Override
-   public void start(Stage primaryStage) throws Exception
-   {
+   public void start(Stage primaryStage) throws Exception {
       screen.updateAbbrList(abbrCollection.getAll());
       primaryStage.setTitle(APP_TITLE);
       primaryStage.setScene(screen.getScene());
@@ -25,8 +23,7 @@ public class Main extends Application
       primaryStage.show();
    }
 
-   public static void main(String[] args)
-   {
+   public static void main(String[] args) {
       launch(args);
    }
 }
