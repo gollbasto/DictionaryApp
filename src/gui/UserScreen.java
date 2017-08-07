@@ -5,10 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -39,6 +36,7 @@ public class UserScreen {
    private static final String USER_TEXT_FIELD_BORDER_COLOR = "#ffffff";
    private static final double ABBR_LIST_WIDTH = 400;
    private static final double DESCR_LIST_WIDTH = 610;
+   private static final double ABBR_LIST_MAX_WIDTH = 200;
    private static final double DESCR_TEXT_WIDTH = DESCR_LIST_WIDTH - 20;
    private static final double DESCR_TEXT_AREA_SINGLE_ROW_WITH = 88;
    private static final int SCREEN_WIDTH = 1000;
@@ -126,8 +124,7 @@ public class UserScreen {
       HBox descrBox = new HBox();
       descrListView = new ListView<>();
       descrListView.setId("descriptionsList");
-      descrListView.setMinWidth(DESCR_LIST_WIDTH);
-      descrListView.setMaxWidth(DESCR_LIST_WIDTH);
+      descrListView.setMinWidth(SCREEN_WIDTH - ABBR_LIST_MAX_WIDTH + 10);
       descrBox.getChildren().add(descrListView);
       //descrListView.setMouseTransparent(true);
       root.add(descrBox, 1,1);
@@ -144,7 +141,8 @@ public class UserScreen {
       abbrListView = new ListView<>();
       abbrListView.setItems(abbrList);
       abbrListView.setId("abbrList");
-      abbrListView.setMinWidth(ABBR_LIST_WIDTH);
+      abbrListView.setMaxWidth(ABBR_LIST_MAX_WIDTH);
+
       abbrListView.setOnMouseClicked(abbrListMouseEventHandler());
       abbrListView.setOnKeyPressed(abbrListKeyPressedHandler());
       abbrListView.setOnKeyReleased(abbrListKeyReleasedHandler());
