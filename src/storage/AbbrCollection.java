@@ -14,7 +14,8 @@ import static logic.Main.screen;
  * Created by hanashi on 20.07.2017.
  */
 public class AbbrCollection {
-   private Map<String, List<String>> collection;
+   private TreeMap<String, List<String>> collection;
+   private TreeMap<String, String> normalCase;
    private List<String> splitPatterns = Arrays.asList(" \u002D ", "\t\u002D ", " \u002D\t", "\t\u002D\t", " \u2013 ", "\t\u2013 ", " \u2013\t", "\t\u2013\t");
 
    public AbbrCollection(String filePath) {
@@ -22,7 +23,8 @@ public class AbbrCollection {
    }
 
    private void fillCollectionFromFile(String filePath) {
-      collection = new HashMap<>();
+      collection = new TreeMap();
+      normalCase = new TreeMap<>();
       if(!filePath.isEmpty()) {
 
          File abbrCollectionFile = new File(filePath);
@@ -44,12 +46,15 @@ public class AbbrCollection {
 
    private void addOrUpdateAbbreviationToCollection(boolean splitSuccess, List<String> values) {
       if(splitSuccess) {
-         if (collection.keySet().contains(values.get(0))) {
-            collection.get(values.get(0)).add(values.get(1));
+         String abbreviation = values.get(0);
+         String description = values.get(1);
+         if (collection.keySet().contains(abbreviation.toUpperCase())) {
+            collection.get(abbreviation.toUpperCase()).add(description);
          } else {
-            List<String> descriptions = new ArrayList<String>();
-            descriptions.add(values.get(1));
-            collection.put(values.get(0), descriptions);
+            List<String> descriptions = new ArrayList<>();
+            descriptions.add(description);
+            collection.put(abbreviation.toUpperCase(), descriptions);
+            normalCase.put(abbreviation.toUpperCase(), abbreviation);
          }
       }
    }
@@ -73,11 +78,13 @@ public class AbbrCollection {
    }
 
    public Map<String, List<String>> get(String abbrName) {
-      Map<String, List<String>> result = new HashMap<>();
-      for (String abbr : collection.keySet()) {
-         if (abbr.toUpperCase().startsWith(abbrName.toUpperCase())) {
-            result.put(abbr, collection.get(abbr));
+      Map<String, List<String>> result = new TreeMap<>();
+      SortedMap<String, List<String>> tail = collection.tailMap(abbrName.toUpperCase());
+      for (String abbr : tail.keySet()) {
+         if (!abbr.toUpperCase().startsWith(abbrName.toUpperCase())) {
+            return result;
          }
+         result.put(abbr, collection.get(abbr));
       }
       return result;
    }
@@ -100,5 +107,9 @@ public class AbbrCollection {
       screen.updateUserTextString("");
       screen.resetAbbrListCursor();
       screen.resetSearchString();
+   }
+
+   public String getNormalCase(String abbrInUpperCase){
+      return normalCase.get(abbrInUpperCase);
    }
 }

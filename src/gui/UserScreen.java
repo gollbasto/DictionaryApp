@@ -214,11 +214,11 @@ public class UserScreen {
       }
    }
 
-   public ObservableList<String> createAbbrList(Map<String, List<String>> abbrCollection) {
+   public ObservableList<String> createAbbrList(Map<String, List<String>> collection) {
       ObservableList<String> list = FXCollections.observableArrayList();
 
-      for (String abbr : abbrCollection.keySet()) {
-         list.add(abbr);
+      for (String abbr : collection.keySet()) {
+         list.add(abbrCollection.getNormalCase(abbr));
       }
       Collections.sort(list);
       return list;
@@ -239,8 +239,8 @@ public class UserScreen {
    public ObservableList<TextArea> createDescrList2(Map<String, List<String>> abbrCollection, String abbrName) {
       ObservableList<TextArea> list = FXCollections.observableArrayList();
 
-      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName) != null) {
-         for (String descr : abbrCollection.get(abbrName)) {
+      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName.toUpperCase()) != null) {
+         for (String descr : abbrCollection.get(abbrName.toUpperCase())) {
             TextArea area = new TextArea(descr);
             area.setWrapText(true);
             area.setPrefWidth(DESCR_TEXT_WIDTH);
