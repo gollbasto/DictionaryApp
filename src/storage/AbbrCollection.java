@@ -14,7 +14,7 @@ import static logic.Main.screen;
  * Created by hanashi on 20.07.2017.
  */
 public class AbbrCollection {
-   private TreeMap<String, List<String>> collection;
+   private Map<String, List<String>> collection;
    private List<String> splitPatterns = Arrays.asList(" \u002D ", "\t\u002D ", " \u002D\t", "\t\u002D\t", " \u2013 ", "\t\u2013 ", " \u2013\t", "\t\u2013\t");
 
    public AbbrCollection(String filePath) {
@@ -22,7 +22,7 @@ public class AbbrCollection {
    }
 
    private void fillCollectionFromFile(String filePath) {
-      collection = new TreeMap();
+      collection = new HashMap<>();
       if(!filePath.isEmpty()) {
 
          File abbrCollectionFile = new File(filePath);
@@ -73,13 +73,11 @@ public class AbbrCollection {
    }
 
    public Map<String, List<String>> get(String abbrName) {
-      Map<String, List<String>> result = new TreeMap<>();
-      SortedMap<String, List<String>> tail = collection.tailMap(abbrName.toUpperCase());
-      for (String abbr : tail.keySet()) {
-         if (!abbr.toUpperCase().startsWith(abbrName.toUpperCase())) {
-            return result;
+      Map<String, List<String>> result = new HashMap<>();
+      for (String abbr : collection.keySet()) {
+         if (abbr.toUpperCase().startsWith(abbrName.toUpperCase())) {
+            result.put(abbr, collection.get(abbr));
          }
-         result.put(abbr, collection.get(abbr));
       }
       return result;
    }
