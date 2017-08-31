@@ -59,7 +59,7 @@ public class UserScreen {
    private static final String ADD_BUTTON_ICON_PATH = "file:res/add.png";
    private static final String REMOVE_BUTTON_ICON_PATH = "file:res/remove.png";
    private static final String EMPTY_STR = "";
-   private static final String DROP_SHADOW_STYLE = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
+   public static final String DROP_SHADOW_STYLE = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
 
    private KeyPressHandler keyPressHandler = new KeyPressHandler();
 
@@ -120,52 +120,23 @@ public class UserScreen {
 
    private ImageView createRefreshButton(){
 
-       Image imgRefresh = new Image(REFRESH_BUTTON_ICON_PATH);
-       final ImageView viewRefresh = new ImageView(imgRefresh);
-       viewRefresh.setStyle(DROP_SHADOW_STYLE);
-       Tooltip.install(viewRefresh, new Tooltip(REFRESH_BUTTON_TOOLTIP));
+       final ImageView viewRefresh = ImageViewStylized.get(REFRESH_BUTTON_ICON_PATH, REFRESH_BUTTON_TOOLTIP);
        viewRefresh.setOnMouseClicked(new EventHandler<MouseEvent>() {
            @Override
            public void handle(MouseEvent event) {
                abbrCollection.refresh();
            }
        });
-       viewRefresh.setOnMousePressed(new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-               viewRefresh.setStyle("");
-           }
-       });
-       viewRefresh.setOnMouseReleased(new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-               viewRefresh.setStyle(DROP_SHADOW_STYLE);
-           }
-       });
+
        return viewRefresh;
    }
 
    private ImageView createAddButton(){
-       Image imgAdd = new Image(ADD_BUTTON_ICON_PATH);
-       final ImageView viewAdd = new ImageView(imgAdd);
-       viewAdd.setStyle(DROP_SHADOW_STYLE);
-       Tooltip.install(viewAdd, new Tooltip(ADD_BUTTON_TOOLTIP));
+       final ImageView viewAdd = ImageViewStylized.get(ADD_BUTTON_ICON_PATH, ADD_BUTTON_TOOLTIP);
        viewAdd.setOnMouseClicked(new EventHandler<MouseEvent>() {
            @Override
            public void handle(MouseEvent event) {
                openAddWindow();
-           }
-       });
-       viewAdd.setOnMousePressed(new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-               viewAdd.setStyle("");
-           }
-       });
-       viewAdd.setOnMouseReleased(new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-               viewAdd.setStyle(DROP_SHADOW_STYLE);
            }
        });
 
@@ -174,28 +145,14 @@ public class UserScreen {
 
    private ImageView createRemoveButton(){
 
-       Image imgRemove = new Image(REMOVE_BUTTON_ICON_PATH);
-       final ImageView viewRemove = new ImageView(imgRemove);
-       viewRemove.setStyle(DROP_SHADOW_STYLE);
-       Tooltip.install(viewRemove, new Tooltip(REMOVE_BUTTON_TOOLTIP));
+       final ImageView viewRemove = ImageViewStylized.get(REMOVE_BUTTON_ICON_PATH, REMOVE_BUTTON_TOOLTIP);
        viewRemove.setOnMouseClicked(new EventHandler<MouseEvent>() {
            @Override
            public void handle(MouseEvent event) {
                removeItem();
            }
        });
-       viewRemove.setOnMousePressed(new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-               viewRemove.setStyle("");
-           }
-       });
-       viewRemove.setOnMouseReleased(new EventHandler<MouseEvent>() {
-           @Override
-           public void handle(MouseEvent event) {
-               viewRemove.setStyle(DROP_SHADOW_STYLE);
-           }
-       });
+
        return viewRemove;
    }
 
