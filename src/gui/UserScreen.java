@@ -20,6 +20,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import logic.KeyPressHandler;
+import logic.Main;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -39,7 +40,7 @@ public class UserScreen {
    private GridPane root;
    private Label userText;
    private ListView<String> abbrListView;
-   private ListView<TextArea> descrListView;
+   private ListView<HBox> descrListView;
    private Stage addNewItemWindow;
    private TextArea text;
    private String selectedDescriptionText;
@@ -58,6 +59,7 @@ public class UserScreen {
    private static final String REFRESH_BUTTON_ICON_PATH = "file:res/refresh2.png";
    private static final String ADD_BUTTON_ICON_PATH = "file:res/add.png";
    private static final String REMOVE_BUTTON_ICON_PATH = "file:res/remove.png";
+   private static final String REMOVE_BUTTON_SMALL_ICON_PATH = "file:res/remove2.png";
    private static final String EMPTY_STR = "";
    public static final String DROP_SHADOW_STYLE = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
 
@@ -116,7 +118,7 @@ public class UserScreen {
 
       //перенос кнопок в правую часть
       HBox freeSpace = new HBox();
-      freeSpace.setMinWidth(670);
+      freeSpace.setMinWidth(300);
       HBox allTogether = new HBox();
       allTogether.getChildren().add(freeSpace);
       allTogether.getChildren().add(buttons);
@@ -299,11 +301,12 @@ public class UserScreen {
       return list;
    }
 
-   public ObservableList<TextArea> createDescrList2(Map<String, List<String>> abbrCollection, String abbrName) {
-      ObservableList<TextArea> list = FXCollections.observableArrayList();
+   public ObservableList<HBox> createDescrList2(final Map<String, List<String>> abbrevCollection, String abbrName) {
+      ObservableList<HBox> list = FXCollections.observableArrayList();
 
-      if (!abbrCollection.isEmpty() && abbrCollection.get(abbrName.toUpperCase()) != null) {
-         for (String descr : abbrCollection.get(abbrName.toUpperCase())) {
+
+      if (!abbrevCollection.isEmpty() && abbrCollection.get(abbrName.toUpperCase()) != null) {
+         for (String descr : abbrevCollection.get(abbrName.toUpperCase())) {
             TextArea area = new TextArea(descr);
             area.setWrapText(true);
             area.setPrefWidth(DESCR_TEXT_WIDTH);
@@ -325,7 +328,25 @@ public class UserScreen {
                     selectedDescriptionText = src.getText();
                 }
             });
-            list.add(area);
+            area.setMinWidth(770);
+
+            //Кнопка удалить возле каждой записи
+            ImageView removeButton = ImageViewStylized.get(REMOVE_BUTTON_SMALL_ICON_PATH, REMOVE_BUTTON_TOOLTIP);
+            removeButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+               @Override
+               public void handle(MouseEvent event) {
+                  ImageView button = (ImageView)event.getSource();
+                  HBox parent = (HBox) button.getParent();
+                  TextArea area = (TextArea) parent.getChildren().get(0);
+                  abbrCollection.remove(abbrListView.getSelectionModel().getSelectedItem(), area.getText());
+               }
+            });
+
+            HBox box = new HBox();
+            box.getChildren().add(area);
+            box.getChildren().add(removeButton);
+
+            list.add(box);
          }
       }
       return list;
@@ -335,7 +356,7 @@ public class UserScreen {
       abbrListView.setItems(createAbbrList(abbrCollection));
    }
 
-   public void updateDescrList(ObservableList<TextArea> descrList) {
+   public void updateDescrList(ObservableList<HBox> descrList) {
       descrListView.setItems(descrList);
    }
 
