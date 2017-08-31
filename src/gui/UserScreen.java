@@ -126,6 +126,7 @@ public class UserScreen {
       HBox buttons = new HBox();
       buttons.getChildren().add(viewRefresh);
       buttons.getChildren().add(viewAdd);
+      buttons.setSpacing(15);
 
       root.add(buttons, 1, 0);
    }
