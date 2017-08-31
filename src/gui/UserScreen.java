@@ -344,19 +344,23 @@ public class UserScreen {
    private void saveItem(String text){
       text = text.trim();
       text = "\n" + text;
+
       if (text.contains("\u002D") || text.contains("\u2013")) {
          int pos;
          pos = text.indexOf("\u002D") == 0 ? text.indexOf("\u2013") :  text.indexOf("\u002D");
+          String[] result = text.split(Character.toString(text.charAt(pos)),2);
+          result[0] = result[0].toUpperCase();
+          text = result[0] + text.charAt(pos) + result[1];
 
          if (!(text.charAt(pos - 1) == '\t' || text.charAt(pos - 1) == ' ')) {
-            String[] result = text.split(Character.toString(text.charAt(pos)),2);
+            result = text.split(Character.toString(text.charAt(pos)),2);
             result[0] += " ";
             text = result[0] + text.charAt(pos) + result[1];
             pos++;
          }
 
          if (!(text.charAt(pos + 1) == '\t' || text.charAt(pos + 1) == ' ')) {
-            String[] result = text.split(Character.toString(text.charAt(pos)),2);
+            result = text.split(Character.toString(text.charAt(pos)),2);
             result[1] = " " + result[1];
             text = result[0] + text.charAt(pos) + result[1];
          }
