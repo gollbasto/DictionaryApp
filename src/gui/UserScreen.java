@@ -90,7 +90,6 @@ public class UserScreen {
    }
 
    private void createHeader() {
-      //кнопка "Обновить из файла"
       createButtons();
       //поле с вводимым пользователем текстом
       createUserTextField();
@@ -115,7 +114,13 @@ public class UserScreen {
       buttons.getChildren().add(createRemoveButton());
       buttons.setSpacing(15);
 
-      root.add(buttons, 1, 0);
+      HBox freeSpace = new HBox();
+      freeSpace.setMinWidth(670);
+      HBox allTogether = new HBox();
+      allTogether.getChildren().add(freeSpace);
+      allTogether.getChildren().add(buttons);
+
+      root.add(allTogether, 1, 0);
    }
 
    private ImageView createRefreshButton(){
