@@ -1,12 +1,12 @@
 package storage;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static logic.Main.COLLECTION_BUFFER_PATH;
 import static logic.Main.COLLECTION_PATH;
 import static logic.Main.screen;
 
@@ -18,16 +18,16 @@ public class AbbrCollection {
    private TreeMap<String, String> normalCase;
    private List<String> splitPatterns = Arrays.asList(" \u002D ", "\t\u002D ", " \u002D\t", "\t\u002D\t", " \u2013 ", "\t\u2013 ", " \u2013\t", "\t\u2013\t");
 
-   public AbbrCollection(String filePath) {
-      fillCollectionFromFile(filePath);
+   public AbbrCollection() {
+      fillCollectionFromFile();
    }
 
-   private void fillCollectionFromFile(String filePath) {
+   private void fillCollectionFromFile() {
       collection = new TreeMap();
       normalCase = new TreeMap<>();
-      if(!filePath.isEmpty()) {
+      if(!COLLECTION_PATH.isEmpty()) {
 
-         File abbrCollectionFile = new File(filePath);
+         File abbrCollectionFile = new File(COLLECTION_PATH);
          if(abbrCollectionFile.exists()) {
             try {
                BufferedReader reader = new BufferedReader(new FileReader(abbrCollectionFile));
@@ -37,6 +37,7 @@ public class AbbrCollection {
                   Object[] splitResult = splitToAbbreviationAndDescription(line);
                   addOrUpdateAbbreviationToCollection( (boolean) splitResult[1], (List<String>) splitResult[0]);
                }
+               reader.close();
             } catch (IOException e) {
                e.printStackTrace();
             }
@@ -98,7 +99,7 @@ public class AbbrCollection {
    }
 
    public void refresh() {
-      fillCollectionFromFile(COLLECTION_PATH);
+      fillCollectionFromFile();
       refreshScreen();
    }
 
@@ -111,5 +112,51 @@ public class AbbrCollection {
 
    public String getNormalCase(String abbrInUpperCase){
       return normalCase.get(abbrInUpperCase);
+   }
+
+   public void remove(String abbreviationToRemove, String descriptionToRemove){
+
+      File file = new File(COLLECTION_PATH);
+      File fileBuffer = new File(COLLECTION_BUFFER_PATH);
+
+
+      try {
+         if (fileBuffer.exists())
+            fileBuffer.delete();
+         fileBuffer.createNewFile();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+
+      try {
+         FileReader fileReader = new FileReader(file);
+         BufferedReader br = new BufferedReader(fileReader);
+
+         String line;
+         List<String> splitValues;
+         List<String> result = new ArrayList<>();
+         while ((line = br.readLine()) != null) {
+            for (String pattern : splitPatterns) {
+              splitValues = Arrays.asList(line.split(pattern));
+               if (splitValues.size() == 2) {
+                  result = splitValues;
+               }
+            }
+            if(!(result.get(0).equals(abbreviationToRemove)&& result.get(1).equals(descriptionToRemove))){
+               Files.write(Paths.get(COLLECTION_BUFFER_PATH), (line  + "\n").getBytes() , StandardOpenOption.APPEND);
+            }
+         }
+         fileReader.close();
+         br.close();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      try {
+         Files.copy(Paths.get(COLLECTION_BUFFER_PATH), Paths.get(COLLECTION_PATH), REPLACE_EXISTING);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      fileBuffer.delete();
+      refresh();
    }
 }

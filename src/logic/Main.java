@@ -8,10 +8,11 @@ import storage.AbbrCollection;
 
 public class Main extends Application {
    public static final String COLLECTION_PATH = "./res/abbr.txt";
+   public static final String COLLECTION_BUFFER_PATH = "./res/buff.txt";
    public static final String APP_ICON_PATH =  "file:res/app.png";
    private static final String APP_TITLE = "AbbrDictionaryApp";
    public static UserScreen screen = new UserScreen();
-   public static AbbrCollection abbrCollection = new AbbrCollection(COLLECTION_PATH);
+   public static AbbrCollection abbrCollection = new AbbrCollection();
 
    @Override
    public void start(Stage primaryStage) throws Exception {

@@ -42,6 +42,7 @@ public class UserScreen {
    private ListView<TextArea> descrListView;
    private Stage addNewItemWindow;
    private TextArea text;
+   private String selectedDescriptionText;
    private static final String BG_COLOR = "#40c080";
    private static final String USER_TEXT_FIELD_BORDER_COLOR = "#ffffff";
    private static final double ABBR_LIST_WIDTH = 400;
@@ -53,9 +54,12 @@ public class UserScreen {
    private static final int SCREEN_HEIGHT = 400;
    private static final String ADD_BUTTON_TOOLTIP = "Добавить запись";
    private static final String REFRESH_BUTTON_TOOLTIP = "Обновить из файла";
+   private static final String REMOVE_BUTTON_TOOLTIP = "Удалить запись";
    private static final String REFRESH_BUTTON_ICON_PATH = "file:res/refresh2.png";
    private static final String ADD_BUTTON_ICON_PATH = "file:res/add.png";
+   private static final String REMOVE_BUTTON_ICON_PATH = "file:res/remove.png";
    private static final String EMPTY_STR = "";
+   private static final String DROP_SHADOW_STYLE = "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);";
 
    private KeyPressHandler keyPressHandler = new KeyPressHandler();
 
@@ -79,6 +83,7 @@ public class UserScreen {
             KeyCode code = event.getCode();
             if (!IsModifier(code)) {
                keyPressHandler.handle(code, event.getText(), event.isShiftDown());
+               resetSelectedDescriptionText();
             }
          }
       });
@@ -98,37 +103,100 @@ public class UserScreen {
                       new BorderStrokeStyle(StrokeType.OUTSIDE, StrokeLineJoin.BEVEL, StrokeLineCap.ROUND,  0, 0, new ArrayList<Double>()),
                       new CornerRadii(1),
                       new BorderWidths(1))));
+      headerBox.setMinHeight(33);
       return headerBox;
    }
 
    private void createButtons()
    {
-      Image imgRefresh = new Image(REFRESH_BUTTON_ICON_PATH);
-      ImageView viewRefresh = new ImageView(imgRefresh);
-      Tooltip.install(viewRefresh, new Tooltip(REFRESH_BUTTON_TOOLTIP));
-      viewRefresh.setOnMouseClicked(new EventHandler<MouseEvent>() {
-         @Override
-         public void handle(MouseEvent event) {
-            abbrCollection.refresh();
-         }
-      });
-
-      Image imgAdd = new Image(ADD_BUTTON_ICON_PATH);
-      ImageView viewAdd = new ImageView(imgAdd);
-      Tooltip.install(viewAdd, new Tooltip(ADD_BUTTON_TOOLTIP));
-      viewAdd.setOnMouseClicked(new EventHandler<MouseEvent>() {
-         @Override
-         public void handle(MouseEvent event) {
-            openAddWindow();
-         }
-      });
-
       HBox buttons = new HBox();
-      buttons.getChildren().add(viewRefresh);
-      buttons.getChildren().add(viewAdd);
+      buttons.getChildren().add(createRefreshButton());
+      buttons.getChildren().add(createAddButton());
+      buttons.getChildren().add(createRemoveButton());
       buttons.setSpacing(15);
 
       root.add(buttons, 1, 0);
+   }
+
+   private ImageView createRefreshButton(){
+
+       Image imgRefresh = new Image(REFRESH_BUTTON_ICON_PATH);
+       final ImageView viewRefresh = new ImageView(imgRefresh);
+       viewRefresh.setStyle(DROP_SHADOW_STYLE);
+       Tooltip.install(viewRefresh, new Tooltip(REFRESH_BUTTON_TOOLTIP));
+       viewRefresh.setOnMouseClicked(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               abbrCollection.refresh();
+           }
+       });
+       viewRefresh.setOnMousePressed(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               viewRefresh.setStyle("");
+           }
+       });
+       viewRefresh.setOnMouseReleased(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               viewRefresh.setStyle(DROP_SHADOW_STYLE);
+           }
+       });
+       return viewRefresh;
+   }
+
+   private ImageView createAddButton(){
+       Image imgAdd = new Image(ADD_BUTTON_ICON_PATH);
+       final ImageView viewAdd = new ImageView(imgAdd);
+       viewAdd.setStyle(DROP_SHADOW_STYLE);
+       Tooltip.install(viewAdd, new Tooltip(ADD_BUTTON_TOOLTIP));
+       viewAdd.setOnMouseClicked(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               openAddWindow();
+           }
+       });
+       viewAdd.setOnMousePressed(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               viewAdd.setStyle("");
+           }
+       });
+       viewAdd.setOnMouseReleased(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               viewAdd.setStyle(DROP_SHADOW_STYLE);
+           }
+       });
+
+       return viewAdd;
+   }
+
+   private ImageView createRemoveButton(){
+
+       Image imgRemove = new Image(REMOVE_BUTTON_ICON_PATH);
+       final ImageView viewRemove = new ImageView(imgRemove);
+       viewRemove.setStyle(DROP_SHADOW_STYLE);
+       Tooltip.install(viewRemove, new Tooltip(REMOVE_BUTTON_TOOLTIP));
+       viewRemove.setOnMouseClicked(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               removeItem();
+           }
+       });
+       viewRemove.setOnMousePressed(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               viewRemove.setStyle("");
+           }
+       });
+       viewRemove.setOnMouseReleased(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent event) {
+               viewRemove.setStyle(DROP_SHADOW_STYLE);
+           }
+       });
+       return viewRemove;
    }
 
    private void createUserTextField() {
@@ -186,6 +254,7 @@ public class UserScreen {
             String abbrName = abbrListView.getSelectionModel().getSelectedItem();
             if (abbrName != null) {
                descrListView.setItems(createDescrList2(abbrCollection.get(abbrName), abbrName));
+               resetSelectedDescriptionText();
             }
          }
       };
@@ -198,6 +267,7 @@ public class UserScreen {
             if (event.getCode().equals(KeyCode.ENTER)) {
                if (abbrListView.getSelectionModel().getSelectedItem() != null) {
                   descrListView.setItems(createDescrList2(abbrCollection.get(abbrListView.getSelectionModel().getSelectedItem()), abbrListView.getSelectionModel().getSelectedItem()));
+                  resetSelectedDescriptionText();
                }
             }
          }
@@ -211,6 +281,7 @@ public class UserScreen {
             if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.DOWN)) {
                if (abbrListView.getSelectionModel().getSelectedItem() != null) {
                   descrListView.setItems(createDescrList2(abbrCollection.get(abbrListView.getSelectionModel().getSelectedItem()), abbrListView.getSelectionModel().getSelectedItem()));
+                  resetSelectedDescriptionText();
                }
             }
          }
@@ -284,6 +355,13 @@ public class UserScreen {
             //area.setEditable(false);
             //area.setMouseTransparent(true);
             area.setPrefColumnCount(1);
+            area.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    TextArea src = (TextArea) event.getSource();
+                    selectedDescriptionText = src.getText();
+                }
+            });
             list.add(area);
          }
       }
@@ -372,5 +450,16 @@ public class UserScreen {
             e1.printStackTrace();
          }
       }
+   }
+
+   private void removeItem(){
+       String abbreviationToRemove = abbrListView.getSelectionModel().getSelectedItem();
+       if(abbreviationToRemove != null && selectedDescriptionText != null){
+           abbrCollection.remove(abbreviationToRemove, selectedDescriptionText);
+       }
+   }
+
+   private void resetSelectedDescriptionText(){
+       selectedDescriptionText = null;
    }
 }
