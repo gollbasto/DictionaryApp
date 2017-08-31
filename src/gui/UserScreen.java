@@ -2,6 +2,7 @@ package gui;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -17,10 +18,17 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import logic.KeyPressHandler;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
+import static logic.Main.APP_ICON_PATH;
+import static logic.Main.COLLECTION_PATH;
 import static logic.Main.abbrCollection;
 
 /**
@@ -32,6 +40,8 @@ public class UserScreen {
    private Label userText;
    private ListView<String> abbrListView;
    private ListView<TextArea> descrListView;
+   private Stage addNewItemWindow;
+   private TextArea text;
    private static final String BG_COLOR = "#40c080";
    private static final String USER_TEXT_FIELD_BORDER_COLOR = "#ffffff";
    private static final double ABBR_LIST_WIDTH = 400;
@@ -41,8 +51,10 @@ public class UserScreen {
    private static final double DESCR_TEXT_AREA_SINGLE_ROW_WITH = 88;
    private static final int SCREEN_WIDTH = 1000;
    private static final int SCREEN_HEIGHT = 400;
+   private static final String ADD_BUTTON_TOOLTIP = "Добавить запись";
    private static final String REFRESH_BUTTON_TOOLTIP = "Обновить из файла";
    private static final String REFRESH_BUTTON_ICON_PATH = "file:res/refresh2.png";
+   private static final String ADD_BUTTON_ICON_PATH = "file:res/add.png";
    private static final String EMPTY_STR = "";
 
    private KeyPressHandler keyPressHandler = new KeyPressHandler();
@@ -52,6 +64,7 @@ public class UserScreen {
       createScene();
       createHeader();
       createBody();
+      createAddNewItemWindow();
    }
 
    private boolean IsModifier(KeyCode code) {
@@ -73,7 +86,7 @@ public class UserScreen {
 
    private void createHeader() {
       //кнопка "Обновить из файла"
-      createRefreshFromFileButton();
+      createButtons();
       //поле с вводимым пользователем текстом
       createUserTextField();
    }
@@ -88,18 +101,33 @@ public class UserScreen {
       return headerBox;
    }
 
-   private void createRefreshFromFileButton() {
-      Image img = new Image(REFRESH_BUTTON_ICON_PATH);
-      ImageView view = new ImageView(img);
-      Tooltip.install(view, new Tooltip(REFRESH_BUTTON_TOOLTIP));
-
-      view.setOnMouseClicked(new EventHandler<MouseEvent>() {
+   private void createButtons()
+   {
+      Image imgRefresh = new Image(REFRESH_BUTTON_ICON_PATH);
+      ImageView viewRefresh = new ImageView(imgRefresh);
+      Tooltip.install(viewRefresh, new Tooltip(REFRESH_BUTTON_TOOLTIP));
+      viewRefresh.setOnMouseClicked(new EventHandler<MouseEvent>() {
          @Override
          public void handle(MouseEvent event) {
             abbrCollection.refresh();
          }
       });
-      root.add(view, 1, 0);
+
+      Image imgAdd = new Image(ADD_BUTTON_ICON_PATH);
+      ImageView viewAdd = new ImageView(imgAdd);
+      Tooltip.install(viewAdd, new Tooltip(ADD_BUTTON_TOOLTIP));
+      viewAdd.setOnMouseClicked(new EventHandler<MouseEvent>() {
+         @Override
+         public void handle(MouseEvent event) {
+            openAddWindow();
+         }
+      });
+
+      HBox buttons = new HBox();
+      buttons.getChildren().add(viewRefresh);
+      buttons.getChildren().add(viewAdd);
+
+      root.add(buttons, 1, 0);
    }
 
    private void createUserTextField() {
@@ -275,5 +303,69 @@ public class UserScreen {
 
    public void resetSearchString() {
       keyPressHandler.resetSearchString();
+   }
+
+   private void openAddWindow() {
+      addNewItemWindow.show();
+   }
+
+   private void createAddNewItemWindow(){
+      GridPane root = new GridPane();
+
+      text = new TextArea();
+      text.setWrapText(true);
+
+      Button okButton = new Button("OK");
+      okButton.setFocusTraversable(false);
+      okButton.setMinWidth(310);
+      okButton.setOnAction(new EventHandler<ActionEvent>() {
+         @Override
+         public void handle(ActionEvent event) {
+            saveItem(text.getText());
+            addNewItemWindow.close();
+            text.clear();
+            abbrCollection.refresh();
+         }
+      });
+
+      root.add(text, 0,0);
+      root.add(okButton,0, 1);
+
+      Scene scene = new Scene(root, 300, 190);
+      addNewItemWindow = new Stage();
+      addNewItemWindow.setScene(scene);
+      addNewItemWindow.setResizable(false);
+      addNewItemWindow.setAlwaysOnTop(true);
+      addNewItemWindow.setTitle("Добавить запись");
+
+      addNewItemWindow.getIcons().add(new Image(APP_ICON_PATH));
+   }
+
+   private void saveItem(String text){
+      text = text.trim();
+      text = "\n" + text;
+      if (text.contains("\u002D") || text.contains("\u2013")) {
+         int pos;
+         pos = text.indexOf("\u002D") == 0 ? text.indexOf("\u2013") :  text.indexOf("\u002D");
+
+         if (!(text.charAt(pos - 1) == '\t' || text.charAt(pos - 1) == ' ')) {
+            String[] result = text.split(Character.toString(text.charAt(pos)),2);
+            result[0] += " ";
+            text = result[0] + text.charAt(pos) + result[1];
+            pos++;
+         }
+
+         if (!(text.charAt(pos + 1) == '\t' || text.charAt(pos + 1) == ' ')) {
+            String[] result = text.split(Character.toString(text.charAt(pos)),2);
+            result[1] = " " + result[1];
+            text = result[0] + text.charAt(pos) + result[1];
+         }
+
+         try {
+            Files.write(Paths.get(COLLECTION_PATH), text.getBytes(), StandardOpenOption.APPEND);
+         } catch (IOException e1) {
+            e1.printStackTrace();
+         }
+      }
    }
 }

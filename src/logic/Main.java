@@ -8,7 +8,7 @@ import storage.AbbrCollection;
 
 public class Main extends Application {
    public static final String COLLECTION_PATH = "./res/abbr.txt";
-   private static final String APP_ICON_PATH =  "file:res/app.png";
+   public static final String APP_ICON_PATH =  "file:res/app.png";
    private static final String APP_TITLE = "AbbrDictionaryApp";
    public static UserScreen screen = new UserScreen();
    public static AbbrCollection abbrCollection = new AbbrCollection(COLLECTION_PATH);
