@@ -114,6 +114,7 @@ public class UserScreen {
       buttons.getChildren().add(createRemoveButton());
       buttons.setSpacing(15);
 
+      //перенос кнопок в правую часть
       HBox freeSpace = new HBox();
       freeSpace.setMinWidth(670);
       HBox allTogether = new HBox();
